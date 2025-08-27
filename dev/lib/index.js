@@ -1338,9 +1338,9 @@ function extension(combined, extension) {
 function combineHandles(left, right) {
   if (!left) return right
 
-  return function (...params) {
-    const rightResult = right.apply(this, params)
-    return rightResult === false ? left.apply(this, params) : rightResult
+  return function (...parameters) {
+    const rightResult = right.apply(this, parameters)
+    return rightResult === false ? left.apply(this, parameters) : rightResult
   }
 }
 
