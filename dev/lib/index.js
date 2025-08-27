@@ -1309,9 +1309,15 @@ function extension(combined, extension) {
 
         case 'enter':
         case 'exit': {
+          const left = combined[key]
           const right = extension[key]
-          if (right) {
-            Object.assign(combined[key], right)
+          for (const tokenType in right) {
+            if (right[tokenType]) {
+              left[tokenType] = combineHandles(
+                left[tokenType],
+                right[tokenType]
+              )
+            }
           }
 
           break
@@ -1319,6 +1325,22 @@ function extension(combined, extension) {
         // No default
       }
     }
+  }
+}
+
+/**
+ * Creates a new handle that calls `right` first, then falls through to `left`
+ * only if `right` explicitly returns `false`.
+ * @param {Handle?} left
+ * @param {Handle} right
+ * @returns {Handle}
+ */
+function combineHandles(left, right) {
+  if (!left) return right
+
+  return function (...params) {
+    const rightResult = right.apply(this, params)
+    return rightResult === false ? left.apply(this, params) : rightResult
   }
 }
 
